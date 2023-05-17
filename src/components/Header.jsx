@@ -79,7 +79,7 @@ export const Header = forwardRef(function Header({ className }, ref) {
           <ModeToggle />
         </div>
         <div className="hidden min-[416px]:contents">
-          <Button href="#">Sign in</Button>
+          <Button href="https://app.wunderdocs.io/">Sign in</Button>
         </div>
       </div>
     </motion.div>
