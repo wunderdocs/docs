@@ -198,8 +198,10 @@ export const navigation = [
   {
     title: 'Resources',
     links: [
-      { title: 'Templates', href: '/contacts' },
-      { title: 'Documents', href: '/conversations' },
+      { title: 'Templates', href: '/templates' },
+      { title: 'Documents', href: '/documents' },
+      { title: 'Fill a PDF', href: '/fill-pdf' },
+
     ],
   },
 ]

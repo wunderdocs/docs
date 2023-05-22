@@ -1,0 +1,45 @@
+export const description =
+  'On this page, we’ll dive into the different documents endpoints you can use to manage documents programmatically.'
+
+# Documents
+
+<Note>
+This section is WIP
+</Note>
+Documents are generated PDF's from templates by filling the templates with data.{{ className: 'lead' }}
+
+## The documents model
+
+The documents model contains all the information about your documents
+
+### Properties
+
+<Properties>
+  <Property name="uid" type="string">
+    The unique identifier for the document.
+  </Property>
+  <Property name="teamId" type="number">
+    The ID of the team associated with the template.
+  </Property>
+  <Property name="creatorId" type="number">
+    The ID of the user who created the template.
+  </Property>
+  <Property name="created" type="timestamp">
+    Timestamp of when the template was created.
+  </Property>
+  <Property name="updated" type="timestamp">
+    Timestamp of when the template was last updated.
+  </Property>
+  <Property name="templateId" type="string">
+    The uid of the template this document is based on.
+  </Property>
+  <Property name="name" type="string">
+    The name of the document.
+  </Property>
+</Properties>
+
+---
+
+## List all documents {{ tag: 'GET', label: '/v1/templatedocuments' }}
+
+## Retrieve a document {{ tag: 'GET', label: '/v1/templatedocuments' }}

@@ -1,0 +1,252 @@
+export const description =
+  'On this page, we’ll dive into the different template endpoints you can use to manage templates programmatically.'
+
+# Templates
+
+Templates are the bluebrints of your documents. You can create a template and use it to create documents. You can also create a template from an existing document by uploading a PDF and mark your input fields in the editor of our app.
+On this page, we'll dive into the different templates endpoints you can use to fill templates programmatically. We'll look at how to query templates so you can fill them with data. To create, update and delete templates please use [our app at wunderdocs.io](https://app.wunderdocs.io/) . {{ className: 'lead' }}
+
+## The template model
+
+The template model contains all the information about your template, such as their name, creator, and most important input fields. The uid is also used as a reference from your generated documents to the template used.
+
+### Properties
+
+<Properties>
+  <Property name="uid" type="string">
+    The unique identifier for the document.
+  </Property>
+  <Property name="teamId" type="number">
+    The ID of the team associated with the template.
+  </Property>
+  <Property name="creatorId" type="number">
+    The ID of the user who created the template.
+  </Property>
+  <Property name="created" type="timestamp">
+    Timestamp of when the template was created.
+  </Property>
+  <Property name="updated" type="timestamp">
+    Timestamp of when the template was last updated.
+  </Property>
+  <Property name="name" type="string">
+    The name of the template.
+  </Property>
+  <Property name="fields" type="object">
+    The fiels associated with the template.
+  </Property>
+
+</Properties>
+
+---
+
+## List all templates {{ tag: 'GET', label: '/v1/templates' }}
+
+<Row>
+  <Col>
+
+    This endpoint allows you to retrieve a paginated list of all your templates. By default, a maximum of 25 templates are shown per page.
+
+    ### Optional attributes
+
+    <Properties>
+      <Property name="limit" type="integer">
+        Limit the number of templates returned.
+      </Property>
+      <Property name="offset" type="integer">
+        Offset of templates returned.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/templates">
+
+    ```bash {{ title: 'cURL' }}
+    curl -G https://api.wunderdocs.io/v1/templates \
+      -H "X-API-KEY: {api-key}" \
+      -d limit=10 \
+      -d offset=0 
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+{
+	"totalCount": 3,
+	"filteredCount": 3,
+	"data": [
+		{
+			"uid": "7d7081bb-c4a1-407e-9dd3-82fb5079e1d9",
+			"name": "My Template",
+			"creatorId": 1,
+			"teamId": 2,
+			"fields": [
+				{
+					"label": "First Name",
+					"key": "firstName"
+				}
+			],
+			"created": "2023-03-22T11:42:52.000Z",
+			"updated": "2023-05-11T23:35:10.000Z"
+		},
+    {...},
+    {...}
+}
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Retrieve a template {{ tag: 'GET', label: '/v1/templates/:uid' }}
+
+<Row>
+  <Col>
+
+    This endpoint allows you to retrieve a template by providing their wunderdocs uid. Refer to [the list](#the-template-model) at the top of this page to see which properties are included with template objects.
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/templates/WAz8eIbvDR60rouK">
+
+    ```bash {{ title: 'cURL' }}
+    curl https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK \
+      -H "X-API-KEY: {api-key}" \
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+		{
+			"uid": "7d7081bb-c4a1-407e-9dd3-82fb5079e1d9",
+			"name": "My Template",
+			"creatorId": 1,
+			"teamId": 2,
+			"fields": [
+				{
+					"label": "First Name",
+					"key": "firstName"
+				}
+			],
+			"created": "2023-03-22T11:42:52.000Z",
+			"updated": "2023-05-11T23:35:10.000Z"
+		},
+    ```
+
+  </Col>
+</Row>
+
+---
+
+
+## Retrieve template fields {{ tag: 'GET', label: '/v1/templates/:uid/fields' }}
+
+<Row>
+  <Col>
+
+    This endpoint allows you to retrieve only the fields of a template by providing their wunderdocs uid. Usefull if you have the template uid and want to build a form to fill the template.
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/templates/WAz8eIbvDR60rouK/fields">
+
+    ```bash {{ title: 'cURL' }}
+    curl https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK/fields \
+      -H "X-API-KEY: {api-key}" \
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+[
+				{
+					"label": "First Name",
+					"key": "firstName"
+				}
+			],
+			
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Update a template {{ tag: 'PUT', label: '/v1/templates/:uid' }}
+
+<Row>
+  <Col>
+
+    This endpoint allows you to perform an update on a template. Currently, the only attribute that can be updated on template is the `name` attribute which controls how a template appears in your list in wunderdocs.
+
+    ### Optional attributes
+
+    <Properties>
+      <Property name="name" type="string">
+        The template name.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="PUT" label="/v1/templates/WAz8eIbvDR60rouK">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X PUT https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK \
+      -H "X-API-KEY: {api-key}" \
+      -d name="Template Name"
+    ```
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+		{
+			"uid": "7d7081bb-c4a1-407e-9dd3-82fb5079e1d9",
+			"name": "My Template",
+			"creatorId": 1,
+			"teamId": 2,
+			"fields": [
+				{
+					"label": "First Name",
+					"key": "firstName"
+				}
+			],
+			"created": "2023-03-22T11:42:52.000Z",
+			"updated": "2023-05-11T23:35:10.000Z"
+		},
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Delete a template {{ tag: 'DELETE', label: '/v1/templates/:uid' }}
+
+<Row>
+  <Col>
+
+    This endpoint allows you to delete a template in wunderdocs. Note: 
+
+    <Note>
+This will also delete your all generated documents with the given template.
+</Note>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="DELETE" label="/v1/templates/WAz8eIbvDR60rouK">
+
+    ```bash {{ title: 'cURL' }}
+    curl -X DELETE https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK \
+      -H "X-API-KEY: {api-key}" \
+    ```
+
+    </CodeGroup>
+
+  </Col>
+</Row>
