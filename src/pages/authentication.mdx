@@ -1,41 +1,38 @@
 export const description =
-  'In this guide, we’ll look at how authentication works. Protocol offers two ways to authenticate your API requests: Basic authentication and OAuth2 with a token.'
+  'In this guide, we’ll look at how authentication works.'
 
 # Authentication
 
-You'll need to authenticate your requests to access any of the endpoints in the Protocol API. In this guide, we'll look at how authentication works. Protocol offers two ways to authenticate your API requests: Basic authentication and OAuth2 with a token — OAuth2 is the recommended way. {{ className: 'lead' }}
+You'll need to authenticate your requests to access any of the endpoints in the wunderdocs API. In this guide, we'll look at how authentication works. Wunderdocs currently offers one way to authenticate which is via API key. {{ className: 'lead' }}
 
-## Basic authentication
+### Authentication with API key
 
-With basic authentication, you use your username and password to authenticate your HTTP requests. Unless you have a very good reason, you probably shouldn't use basic auth. Here's how to authenticate using cURL:
+The API key is a unique identifier that you generate using the [wunderdocs dashboard](https://app.wunderdocs.io/settings) under API settings. You must include an API key with every API request. API keys only give access to data, so they can't be used to log in to the wunderdocs dashboard.
 
-```bash {{ title: 'Example request with basic auth' }}
-curl https://api.protocol.chat/v1/conversations \
-  -u username:password
+---
+
+## Get your API key
+
+After logging in navigate to the [settings](https://app.wunderdocs.io/settings) page and scroll to the bottom. Click on the "Add new API key" button. You will be prompted to enter a name for the API key to confirm the action. After that, you will see your API key.
+
+
+![API key](/Api-key-settings.png)
+
+By clicking on "Copy Key" you can copy the API key to your clipboard and use it in your requests.
+
+---
+
+## Add your API key to your request
+
+Once you have your API key, you can add it to your requests by adding it to the `X-API-KEY` header. Here's an example using cURL:
+
+
+```bash {{ title: 'Example request with API key' }}
+    curl -G https://api.wunderdocs.io/v1/templates \
+      -H "X-API-KEY: {api-key}"
 ```
 
-Please don't commit your Protocol password to GitHub!
+<Note>
+Please don't commit your wunderdocs API key to a public git!
+</Note>
 
-## OAuth2 with bearer token
-
-The recommended way to authenticate with the Protocol API is by using OAuth2. When establishing a connection using OAuth2, you will need your access token — you will find it in the [Protocol dashboard](#) under API settings. Here's how to add the token to the request header using cURL:
-
-```bash {{ title: 'Example request with bearer token' }}
-curl https://api.protocol.chat/v1/conversations \
-  -H "Authorization: Bearer {token}"
-```
-
-Always keep your token safe and reset it if you suspect it has been compromised.
-
-## Using an SDK
-
-If you use one of our official SDKs, you won't have to worry about any of the above — fetch your access token from the [Protocol dashboard](#) under API settings, and the client library will take care of the rest. All the client libraries use OAuth2 behind the scenes.
-
-<div className="not-prose">
-  <Button
-    href="/sdks"
-    variant="text"
-    arrow="right"
-    children="Check out our list of first-party SDKs"
-  />
-</div>

@@ -1,252 +1,115 @@
 export const description =
-  'On this page, we’ll dive into the different contact endpoints you can use to manage contacts programmatically.'
+  'On this page, you learn how to fill templates with data and generate documents.'
 
-# Templates
+# Filling PDF templates
 
-Templates are the bluebrints of your documents. You can create a template and use it to create documents. You can also create a template from an existing document by uploading a PDF and mark your input fields in the editor of our app.
-On this page, we'll dive into the different templates endpoints you can use to fill templates programmatically. We'll look at how to query templates so you can fill them with data. To create, update and delete templates please use [our app at wunderdocs.io](https://app.wunderdocs.io/) . {{ className: 'lead' }}
+Once you have created a template with input fields, you can fill this template in three different ways to generate a PDF document: {{ className: 'lead' }}
 
-## The template model
+1. Fill it via API {{ className: 'lead' }}
+2. Fill it via the fomular on the wunderdocs web {{ className: 'lead' }}
+3. Use an integration to automate your workflow {{ className: 'lead' }}
 
-The template model contains all the information about your template, such as their name, creator, and most important input fields. The uid is also used as a reference from your generated documents to the template used.
+Every time you fill a template, a new document is generated. The document is a snapshot of the template at the time of filling. If you change the template after filling it, the document will not be affected. {{ className: 'lead' }}
 
+## Working with template fields
+
+Everyone of the mentioned methods above requires you to provide the data for the template fields. To list the fields of a template, you can use the [Retrieve template fields](/templates#retrieve-template-fields) endpoint. The response will look like this:
+
+```json
+{
+  "fields": [
+    {
+      "label": "First Name",
+      "key": "firstName",
+      "type": "string"
+    },
+    {
+      "label": "Last Name",
+      "key": "lastName",
+      "type": "string"
+    },
+    {
+      "label": "Age",
+      "key": "age",
+      "type": "number"
+    },
+    {
+      "label": "Married",
+      "key": "isMarried",
+      "type": "boolean"
+    }
+  ]
+}
+```
+
+The data is provided as a JSON object. The keys of the object must match the keys of the template fields. If they don't match, the field will not be filled. For every field you want to fill you need to provide a key-value pair. For example, if you have a field with the key `firstName`, you need to provide a key-value pair with the key `firstName` and the value `John`.
+
+```json
+{
+  "firstName": "John",
+  "isMarried": true,
+  "age": 42
+}
+```
+
+If you don't provide to correct type of data, the field will not be filled. For example, if you have a field with the key `age` and the type `number`, you need to provide a number as value. If you provide a string, the field will not be filled.
+
+---
+
+## Fill a template via API {{ tag: 'POST', label: '/v1/templates/:uid' }}
+
+<Row>
+  <Col>
+
+To fill a template via API, you need to send a POST request to the following endpoint: `/v1/templates/:uid`. The `:uid` parameter is the unique identifier of the template you want to fill. You can find the template uid in the template list or in the template details.
+
+In the response you will get the uid of the generated document and the download url. You can use the download url to download the generated document.
 ### Properties
 
 <Properties>
-  <Property name="uid" type="string">
-    The unique identifier for the document.
+  <Property name="label" type="string">
+    A human readable name for the field.
   </Property>
-  <Property name="teamId" type="number">
-    The ID of the team associated with the template.
+  <Property name="key" type="string">
+    The unique identifier for the field. Currently this is the same as the label.
   </Property>
-  <Property name="creatorId" type="number">
+  <Property name="type" type="text/number/checkbox">
     The ID of the user who created the template.
-  </Property>
-  <Property name="created" type="timestamp">
-    Timestamp of when the template was created.
-  </Property>
-  <Property name="updated" type="timestamp">
-    Timestamp of when the template was last updated.
-  </Property>
-  <Property name="name" type="string">
-    The name of the template.
-  </Property>
-  <Property name="fields" type="object">
-    The fiels associated with the template.
   </Property>
 
 </Properties>
 
----
-
-## List all templates {{ tag: 'GET', label: '/v1/templates' }}
-
-<Row>
-  <Col>
-
-    This endpoint allows you to retrieve a paginated list of all your templates. By default, a maximum of 25 templates are shown per page.
-
-    ### Optional attributes
-
-    <Properties>
-      <Property name="limit" type="integer">
-        Limit the number of templates returned.
-      </Property>
-      <Property name="offset" type="integer">
-        Offset of templates returned.
-      </Property>
-    </Properties>
 
   </Col>
   <Col sticky>
 
-    <CodeGroup title="Request" tag="GET" label="/v1/templates">
-
-    ```bash {{ title: 'cURL' }}
-    curl -G https://api.wunderdocs.io/v1/templates \
-      -H "X-API-KEY: {api-key}" \
-      -d limit=10 \
-      -d offset=0 
+    ```json {{ 'title': 'Example payload' }}
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "isMarried": true,
+      "age": 42
+    }
     ```
 
+    <CodeGroup title="Request" tag="POST" label="/v1/templates/:uid">
+    ```bash {{ title: 'cURL' }}
+    curl -X POST  https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK \
+      -H "X-API-KEY: {api-key}" \
+      -H "Content-Type: application/json" \
+      -d '{"firstName": "John", "lastName": "Doe", "isMarried": true, "age": 42}'
+    ```
     </CodeGroup>
 
     ```json {{ title: 'Response' }}
 {
-	"totalCount": 3,
-	"filteredCount": 3,
-	"data": [
-		{
-			"uid": "7d7081bb-c4a1-407e-9dd3-82fb5079e1d9",
-			"name": "My Template",
-			"creatorId": 1,
-			"teamId": 2,
-			"fields": [
-				{
-					"label": "First Name",
-					"key": "firstName"
-				}
-			],
-			"created": "2023-03-22T11:42:52.000Z",
-			"updated": "2023-05-11T23:35:10.000Z"
-		},
-    {...},
-    {...}
+  "uid": "d531d102-ebeb-48b2-8caf-08e23bd2942f",
+  "templateName": "Untitled (1)",
+  "downloadUrl": "http://api.wunderdocs.io/documents/d531d102-ebeb-48b2-8caf-08e23bd2942f/download"
 }
-    ```
+```
 
   </Col>
 </Row>
 
 ---
-
-## Retrieve a template {{ tag: 'GET', label: '/v1/templates/:uid' }}
-
-<Row>
-  <Col>
-
-    This endpoint allows you to retrieve a template by providing their wunderdocs uid. Refer to [the list](#the-template-model) at the top of this page to see which properties are included with template objects.
-
-  </Col>
-  <Col sticky>
-
-    <CodeGroup title="Request" tag="GET" label="/v1/templates/WAz8eIbvDR60rouK">
-
-    ```bash {{ title: 'cURL' }}
-    curl https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK \
-      -H "X-API-KEY: {api-key}" \
-    ```
-
-    </CodeGroup>
-
-    ```json {{ title: 'Response' }}
-		{
-			"uid": "7d7081bb-c4a1-407e-9dd3-82fb5079e1d9",
-			"name": "My Template",
-			"creatorId": 1,
-			"teamId": 2,
-			"fields": [
-				{
-					"label": "First Name",
-					"key": "firstName"
-				}
-			],
-			"created": "2023-03-22T11:42:52.000Z",
-			"updated": "2023-05-11T23:35:10.000Z"
-		},
-    ```
-
-  </Col>
-</Row>
-
----
-
-
-## Retrieve template fields {{ tag: 'GET', label: '/v1/templates/:uid/fields' }}
-
-<Row>
-  <Col>
-
-    This endpoint allows you to retrieve only the fields of a template by providing their wunderdocs uid. Usefull if you have the template uid and want to build a form to fill the template.
-
-  </Col>
-  <Col sticky>
-
-    <CodeGroup title="Request" tag="GET" label="/v1/templates/WAz8eIbvDR60rouK/fields">
-
-    ```bash {{ title: 'cURL' }}
-    curl https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK/fields \
-      -H "X-API-KEY: {api-key}" \
-    ```
-
-    </CodeGroup>
-
-    ```json {{ title: 'Response' }}
-[
-				{
-					"label": "First Name",
-					"key": "firstName"
-				}
-			],
-			
-    ```
-
-  </Col>
-</Row>
-
----
-
-## Update a template {{ tag: 'PUT', label: '/v1/templates/:uid' }}
-
-<Row>
-  <Col>
-
-    This endpoint allows you to perform an update on a template. Currently, the only attribute that can be updated on template is the `name` attribute which controls how a template appears in your list in wunderdocs.
-
-    ### Optional attributes
-
-    <Properties>
-      <Property name="name" type="string">
-        The template name.
-      </Property>
-    </Properties>
-
-  </Col>
-  <Col sticky>
-
-    <CodeGroup title="Request" tag="PUT" label="/v1/templates/WAz8eIbvDR60rouK">
-
-    ```bash {{ title: 'cURL' }}
-    curl -X PUT https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK \
-      -H "X-API-KEY: {api-key}" \
-      -d name="Template Name"
-    ```
-    </CodeGroup>
-
-    ```json {{ title: 'Response' }}
-		{
-			"uid": "7d7081bb-c4a1-407e-9dd3-82fb5079e1d9",
-			"name": "My Template",
-			"creatorId": 1,
-			"teamId": 2,
-			"fields": [
-				{
-					"label": "First Name",
-					"key": "firstName"
-				}
-			],
-			"created": "2023-03-22T11:42:52.000Z",
-			"updated": "2023-05-11T23:35:10.000Z"
-		},
-    ```
-
-  </Col>
-</Row>
-
----
-
-## Delete a template {{ tag: 'DELETE', label: '/v1/templates/:uid' }}
-
-<Row>
-  <Col>
-
-    This endpoint allows you to delete a template in wunderdocs. Note: 
-
-    <Note>
-This will also delete your all generated documents with the given template.
-</Note>
-
-  </Col>
-  <Col sticky>
-
-    <CodeGroup title="Request" tag="DELETE" label="/v1/templates/WAz8eIbvDR60rouK">
-
-    ```bash {{ title: 'cURL' }}
-    curl -X DELETE https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK \
-      -H "X-API-KEY: {api-key}" \
-    ```
-
-    </CodeGroup>
-
-  </Col>
-</Row>

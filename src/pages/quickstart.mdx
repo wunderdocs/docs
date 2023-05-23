@@ -1,101 +1,110 @@
 export const description =
-  'This guide will get you all set up and ready to use the Protocol API. We’ll cover how to get started an API client and how to make your first API request.'
+  'This guide will get you all set up and ready to use the wunderdocs API. We’ll cover how to get started and how to make your first API request.'
 
 # Quickstart
 
-This guide will get you all set up and ready to use the Protocol API. We'll cover how to get started using one of our API clients and how to make your first API request. We'll also look at where to go next to find all the information you need to take full advantage of our powerful REST API. {{ className: 'lead' }}
+This guide will get you all set up and ready to use the wunderdocs API. We'll cover how to get started using an API key and how to make your first API request. We'll also look at where to go next to find all the information you need to take full advantage of our powerful REST API. {{ className: 'lead' }}
 
 <Note>
-  Before you can make requests to the Protocol API, you will need to grab your
-  API key from your dashboard. You find it under [Settings &raquo; API](#).
+  Before you can make requests to the wunderdocs API, you will need to grab your
+  API key from your dashboard. You find it under [Settings &raquo; API Key](https://app.wunderdocs.io/settings).
 </Note>
 
-## Choose your client
+## Create an Account and Upload a PDF Template
 
-Before making your first API request, you need to pick which API client you will use. In addition to good ol' cURL HTTP requests, Protocol offers clients for JavaScript, Python, and PHP. In the following example, you can see how to install each client.
+Before starting to use the API, you will need to create an account. You can do so by visiting the [wunderdocs website](https://wunderdocs.io) and clicking the "Sign up" button in the top right corner. Once you have created an account, you can upload your first PDF template by clicking the "Add new template" button on your dashboard.
 
-<CodeGroup>
+![Add new template](/upload-wizard.png)
 
-```bash {{ title: 'cURL' }}
-# cURL is most likely already installed on your machine
-curl --version
+## Mark fields in your PDF
+
+After you uploaded a PDF template, you can mark the input fields in your PDF. To do so enter the template editor by clicking "Edit" on the appropriate template row on your dashboard.
+
+<video controls>
+  <source src="/editor-video.webm" type="video/webm"/>
+  Your browser does not support the video tag.
+</video>
+
+## Grab your API key
+
+To make requests to the wunderdocs API, you will need to grab your API key from your dashboard. You find it under [Settings &raquo; API Key](https://app.wunderdocs.io/settings). For more info see [Authentication](/authentication).
+Use this API key to authenticate your requests to the API by adding an `X-API-KEY` header to your requests. See the example below.
+
+```bash {{ title: 'Example request with API key' }}
+    curl -G https://api.wunderdocs.io/v1/templates \
+      -H "X-API-KEY: {api-key}"
 ```
 
-```bash {{ language: 'js' }}
-# Install the Protocol JavaScript SDK
-npm install @example/protocol-api --save
-```
+## Get your template fields
 
-```bash {{ language: 'python' }}
-# Install the Protocol Python SDK
-pip install protocol_api
-```
+To fill your PDF template, you will need to make a POST request to the `/v1/templates/{uid}` endpoint. You can find the template UID on your dashboard, in the URL of the editor or by using the API to [list all templates](/templates#list-all-templates). The request body should contain the data you want to fill your PDF with. You can get the fields to fill by using the `/v1/templates/{uid}/fields` endpoint. See the example below.
 
-```bash {{ language: 'php' }}
-# Install the Protocol PHP SDK
-composer require protocol/sdk
-```
+    <CodeGroup title="Request" tag="GET" label="/v1/templates/WAz8eIbvDR60rouK/fields">
 
-</CodeGroup>
+    ```bash {{ title: 'cURL' }}
+    curl https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK/fields \
+      -H "X-API-KEY: {api-key}" 
+    ```
 
-<div className="not-prose">
-  <Button
-    href="/sdks"
-    variant="text"
-    arrow="right"
-    children="Check out our list of first-party SDKs"
-  />
-</div>
+    </CodeGroup>
 
-## Making your first API request
+    ```json {{ title: 'Response' }}
+      [
+        {
+          "label": "First Name",
+          "key": "firstName",
+          "type": "text"
+        }
+      ]
+    ```
+    <div className="not-prose">
+      <Button
+        href="/templates"
+        variant="text"
+        arrow="right"
+        children="Read the docs for the Templates endpoint"
+      />
+    </div>
+    
 
-After picking your preferred client, you are ready to make your first call to the Protocol API. Below, you can see how to send a GET request to the Conversations endpoint to get a list of all your conversations. In the cURL example, results are limited to ten conversations, the default page length for each client.
 
-<CodeGroup tag="GET" label="/v1/conversations">
+## Fill your PDF template
 
-```bash {{ title: 'cURL' }}
-curl -G https://api.protocol.chat/v1/conversations \
-  -H "Authorization: Bearer {token}" \
-  -d limit=10
-```
+To fill your PDF template, you will need to make a POST request to the `/v1/templates/{uid}` endpoint. You can find the template UID on your dashboard, in the URL of the editor or by using the API to [list all templates](/templates#list-all-templates). The request body should contain the data you want to fill your PDF with. You can get the fields to fill by using the `/v1/templates/{uid}/fields` endpoint. See the example below.
 
-```js
-import ApiClient from '@example/protocol-api'
+    <CodeGroup title="Request" tag="POST" label="/v1/templates/WAz8eIbvDR60rouK">
 
-const client = new ApiClient(token)
+    ```bash {{ title: 'cURL' }}
+    curl https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK \
+      -H "X-API-KEY: {api-key}" \
+      -d '{
+        "firstName": "John",
+        "lastName": "Doe"
+      }'
+    ```
 
-await client.conversations.list()
-```
+    </CodeGroup>
 
-```python
-from protocol_api import ApiClient
-
-client = ApiClient(token)
-
-client.conversations.list()
-```
-
-```php
-$client = new \Protocol\ApiClient($token);
-
-$client->conversations->list();
-```
-
-</CodeGroup>
-
-<div className="not-prose">
-  <Button
-    href="/conversations"
-    variant="text"
-    arrow="right"
-    children="Read the docs for the Conversations endpoint"
-  />
-</div>
+    ```json {{ title: 'Response' }}
+    {
+      "uid": "d531d102-ebeb-48b2-8caf-08e23bd2942f",
+      "templateName": "Untitled (1)",
+      "downloadUrl": "http://api.wunderdocs.io/documents/d531d102-ebeb-48b2-8caf-08e23bd2942f/download"
+    }
+    ```
+    <div className="not-prose">
+      <Button
+        href="/fill-pdf"
+        variant="text"
+        arrow="right"
+        children="Read the docs for the Fill-PDF endpoint"
+      />
+    </div>
 
 ## What's next?
 
-Great, you're now set up with an API client and have made your first request to the API. Here are a few links that might be handy as you venture further into the Protocol API:
+Great, you're now set up with an API client and have made your first request to the API. Here are a few links that might be handy as you venture further into the wunderdocs API:
 
-- [Grab your API key from the Protocol dashboard](#)
-- [Check out the Conversations endpoint](/conversations)
-- [Learn about the different error messages in Protocol](/errors)
+- [Grab your API key from the wunderdocs dashboard](/authentication#get-your-api-key)
+- [Check out the Templates endpoint](/templates)
+- [Learn about the different error messages in wunderdocs](/errors)

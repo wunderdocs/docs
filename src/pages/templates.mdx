@@ -37,6 +37,38 @@ The template model contains all the information about your template, such as the
 
 </Properties>
 
+## Template fields
+
+Every template has a list of fields. These fields are the input fields that you can fill with data when you create a document from a template. The fields are stored as an array of objects. Each object has a label, key and type property. The label is the name of the field, the key is the unique identifier for the field and the type is the type of field. The type can be one of the following:
+
+- text
+- number
+- checkbox
+
+So a field object could look like this:
+
+```json
+{
+  "label": "First Name",
+  "key": "firstName",
+  "type": "text"
+}
+```
+### Properties
+
+<Properties>
+  <Property name="label" type="string">
+    A human readable name for the field.
+  </Property>
+  <Property name="key" type="string">
+    The unique identifier for the field. Currently this is the same as the label.
+  </Property>
+  <Property name="type" type="text/number/checkbox">
+    The ID of the user who created the template.
+  </Property>
+
+</Properties>
+
 ---
 
 ## List all templates {{ tag: 'GET', label: '/v1/templates' }}
@@ -84,14 +116,13 @@ The template model contains all the information about your template, such as the
 			"fields": [
 				{
 					"label": "First Name",
-					"key": "firstName"
+					"key": "firstName",
+          "type": "text",
 				}
 			],
 			"created": "2023-03-22T11:42:52.000Z",
 			"updated": "2023-05-11T23:35:10.000Z"
 		},
-    {...},
-    {...}
 }
     ```
 
@@ -128,7 +159,8 @@ The template model contains all the information about your template, such as the
 			"fields": [
 				{
 					"label": "First Name",
-					"key": "firstName"
+					"key": "firstName",
+          "type": "text",
 				}
 			],
 			"created": "2023-03-22T11:42:52.000Z",
@@ -165,10 +197,10 @@ The template model contains all the information about your template, such as the
 [
 				{
 					"label": "First Name",
-					"key": "firstName"
+					"key": "firstName",
+          "type": "text"
 				}
-			],
-			
+]
     ```
 
   </Col>

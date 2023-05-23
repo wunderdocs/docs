@@ -3,7 +3,7 @@ import { motion, useMotionTemplate, useMotionValue } from 'framer-motion'
 
 import { GridPattern } from '@/components/GridPattern'
 import { Heading } from '@/components/Heading'
-import { ChatBubbleIcon } from '@/components/icons/ChatBubbleIcon'
+import { BeakerIcon } from '@/components/icons/BeakerIcon'
 import { EnvelopeIcon } from '@/components/icons/EnvelopeIcon'
 import { DocumentIcon } from '@/components/icons/DocumentIcon'
 import { DocumentTextIcon } from '@/components/icons/DocumentTextIcon'
@@ -34,6 +34,20 @@ const resources = [
       squares: [
         [-1, 2],
         [1, 3],
+      ],
+    },
+  },
+  {
+    href: '/fill-pdf',
+    name: 'Fill PDF',
+    description:
+      'Learn how to fill a template to generate a filled PDF document.',
+    icon: BeakerIcon,
+    pattern: {
+      y: 32,
+      squares: [
+        [0, 2],
+        [1, 4],
       ],
     },
   },
