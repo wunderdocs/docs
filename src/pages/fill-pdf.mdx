@@ -85,10 +85,13 @@ In the response you will get the uid of the generated document and the download 
 
     ```json {{ 'title': 'Example payload' }}
     {
-      "firstName": "John",
-      "lastName": "Doe",
-      "isMarried": true,
-      "age": 42
+      "title": "My new Document",
+      "data": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "isMarried": true,
+        "age": 42
+      }
     }
     ```
 
@@ -97,16 +100,17 @@ In the response you will get the uid of the generated document and the download 
     curl -X POST  https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK \
       -H "X-API-KEY: {api-key}" \
       -H "Content-Type: application/json" \
-      -d '{"firstName": "John", "lastName": "Doe", "isMarried": true, "age": 42}'
+      -d '{ "title": "My new Document", "data": {"firstName": "John", "lastName": "Doe", "isMarried": true, "age": 42}}'
     ```
     </CodeGroup>
 
     ```json {{ title: 'Response' }}
-{
-  "uid": "d531d102-ebeb-48b2-8caf-08e23bd2942f",
-  "templateName": "Untitled (1)",
-  "downloadUrl": "http://api.wunderdocs.io/documents/d531d102-ebeb-48b2-8caf-08e23bd2942f/download"
-}
+    {
+      "uid": "d531d102-ebeb-48b2-8caf-08e23bd2942f",
+      "name": "My Document",
+      "templateName": "Untitled (1)",
+      "downloadUrl": "http://api.wunderdocs.io/documents/d531d102-ebeb-48b2-8caf-08e23bd2942f/download"
+    }
 ```
 
   </Col>
