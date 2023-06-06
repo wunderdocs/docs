@@ -117,3 +117,150 @@ In the response you will get the uid of the generated document and the download 
 </Row>
 
 ---
+
+## Handling the response
+
+<Row>
+  <Col>
+
+By default the reponse will return a JSON object with the following properties:
+
+### Properties
+
+<Properties>
+  <Property name="uid" type="string">
+    The unique identifier of the document.
+  </Property>
+  <Property name="name" type="string">
+    The name of the document.
+  </Property>
+  <Property name="templateName" type="string">
+    The name of the template.
+  </Property>
+  <Property name="downloadUrl" type="string">
+    The download url of the document.
+  </Property>
+
+</Properties>
+
+
+  </Col>
+  <Col sticky>
+
+    ```json {{ title: 'Response' }}
+    {
+      "uid": "d531d102-ebeb-48b2-8caf-08e23bd2942f",
+      "name": "My Document",
+      "templateName": "Untitled (1)",
+      "downloadUrl": "http://api.wunderdocs.io/documents/d531d102-ebeb-48b2-8caf-08e23bd2942f/download"
+    }
+```
+
+  </Col>
+</Row>
+
+  Since the downloadUrl will return a buffer, you can use the link to create follow up actions. For example, you can use the link to send the document via email or to upload it to a cloud storage.
+
+  You can use tools like zapier to automate your workflow. Just inlude the `downloadUrl` in your zapier workflow and you can use it as a trigger for your next action.
+
+  Furthermore you can easyly integrate the download url in your application. Just use the url as a link in your application and the document will be downloaded or attached to the email.
+
+
+    <CodeGroup title="Attach Document to Mail">
+
+    ```js
+      const nodemailer = require('nodemailer');
+
+      const transporter = nodemailer.createTransport();
+
+      await transporter.sendMail({
+          from: 'your_email@gmail.com',
+          to: 'recipient@example.com', 
+          subject: 'Document Attachment', 
+          text: 'Please find attached document.', 
+          attachments: [
+              {
+                  filename: 'document.pdf',
+                  path: response.data.downloadUrl
+              }
+          ]
+      });
+    ```
+
+    ```python
+      import requests
+      import smtplib
+      from email.mime.multipart import MIMEMultipart
+      from email.mime.text import MIMEText
+      from email.mime.application import MIMEApplication
+
+      msg = MIMEMultipart()
+
+      msg['From'] = "your_email@gmail.com"
+      msg['To'] = "recipient@example.com"
+      msg['Subject'] = "Document Attachment"
+      body = "Please find attached document."
+      msg.attach(MIMEText(body, 'plain'))
+
+      # attach the file
+      filename = "document.pdf"
+      response = requests.get(response.data.downloadUrl, stream=True)
+      part = MIMEApplication(response.content, Name=filename)
+      part['Content-Disposition'] = f'attachment; filename="{filename}"'
+      msg.attach(part)
+
+      server = smtplib.SMTP('smtp.gmail.com', 587)
+      server.starttls()
+
+      server.login(msg['From'], password)
+
+      server.sendmail(msg['From'], msg['To'], msg.as_string())
+
+      server.quit()
+    ```
+
+    ```php
+      use PHPMailer\PHPMailer\PHPMailer;
+
+      // create PHPMailer object
+      $mail = new PHPMailer(true);
+
+
+      $mail->setFrom('your_email@gmail.com', 'Your Name');
+      $mail->addAddress('recipient@example.com', 'Recipient Name');
+
+      // Attachments
+      $mail->addAttachment($response->data->downloadUrl, 'document.pdf');
+
+      // Content
+      $mail->isHTML(true);
+      $mail->Subject = 'Document Attachment';
+      $mail->Body    = 'Please find attached document.';
+
+      $mail->send();
+    ```
+    </CodeGroup>
+
+
+
+However, if you need to stream the response directly into your application to work further with it, you can use the query parameter `responseType` to return it as a binary instead of a structured json. This will return the document as a buffer.
+
+    ### Optional attributes
+
+    <Properties>
+      <Property name="responseType" type="string">
+        The response type of the request. Can be either `json` or `binary`. Default is `json`.
+      </Property>
+    </Properties>
+
+
+    <CodeGroup title="Request" tag="POST" label="/v1/templates/:uid?responseType=binary">
+    ```bash {{ title: 'cURL' }}
+    curl -X POST  https://api.wunderdocs.io/v1/templates/WAz8eIbvDR60rouK?responseType=binary \
+      -H "X-API-KEY: {api-key}" \
+      -H "Content-Type: application/json" \
+      -d '{ "title": "My new Document", "data": {"firstName": "John", "lastName": "Doe", "isMarried": true, "age": 42}}'
+    ```
+    </CodeGroup>
+
+---
