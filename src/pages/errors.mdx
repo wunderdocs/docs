@@ -62,3 +62,49 @@ Here is a list of the different categories of status codes returned by the wunde
 
   </Col>
 </Row>
+
+### 429 Too Many Requests
+
+<Row>
+  <Col>
+
+    If you are making too many requests to the wunderdocs API, you will receive a `429 Too Many Requests` error. This error is returned when you have exceeded the free tier or the rate limit for your account.
+
+    To solve this error you should upgrade your account to a paid version. If you are already on a paid plan, you should contact support.
+
+  </Col>
+  <Col>
+
+    ```json {{ title: "Error response" }}
+    {
+      "status": 429,
+      "error": "invalid_request",
+      "message": "Too Many Requests"
+    }
+    ```
+
+  </Col>
+</Row>
+
+### 429 Free Tier Limit Exceeded
+
+<Row>
+  <Col>
+  You have exceeded the free tier for your account.
+
+    To solve this error you should upgrade your account to a paid version. If you are already on a paid plan, you should contact support.
+
+  </Col>
+  <Col>
+
+    ```json {{ title: "Error response" }}
+    {
+      "status": 429,
+      "error": "invalid_request",
+      "message": "freeTierLimitExceeded"
+    }
+    ```
+
+  </Col>
+</Row>
+
