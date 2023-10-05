@@ -2,10 +2,6 @@ export const description =
   'On this page, we’ll dive into the different documents endpoints you can use to manage documents programmatically.'
 
 # Documents
-
-<Note>
-This section is WIP
-</Note>
 Documents are generated PDF's from templates by filling the templates with data.{{ className: 'lead' }}
 
 ## The documents model
@@ -30,8 +26,8 @@ The documents model contains all the information about your documents
   <Property name="updated" type="timestamp">
     Timestamp of when the template was last updated.
   </Property>
-  <Property name="templateId" type="string">
-    The uid of the template this document is based on.
+  <Property name="templateName" type="string">
+    The name of the template this document is based on.
   </Property>
   <Property name="name" type="string">
     The name of the document.
@@ -40,6 +36,90 @@ The documents model contains all the information about your documents
 
 ---
 
-## List all documents {{ tag: 'GET', label: '/v1/templatedocuments' }}
+## List all documents {{ tag: 'GET', label: '/v1/documents' }}
 
-## Retrieve a document {{ tag: 'GET', label: '/v1/templatedocuments' }}
+<Row>
+  <Col>
+
+    This endpoint allows you to retrieve a paginated list of all your documents. By default, a maximum of 10 documents are shown per page.
+
+    ### Optional attributes
+
+    <Properties>
+      <Property name="limit" type="integer">
+        Limit the number of templates returned.
+      </Property>
+      <Property name="offset" type="integer">
+        Offset of templates returned.
+      </Property>
+    </Properties>
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/documents">
+
+    ```bash {{ title: 'cURL' }}
+    curl -G https://api.wunderdocs.io/v1/documents \
+      -H "X-API-KEY: {api-key}" \
+      -d limit=10 \
+      -d offset=0 
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+{
+	"totalCount": 3,
+	"filteredCount": 3,
+	"data": [
+		{
+			"uid": "1d58055b-fc11-4246-bc16-87045d38381d",
+			"title": "My Document",
+			"teamId": 2,
+			"created": "2023-06-30T10:57:12.000Z",
+			"updated": "2023-06-30T10:57:12.000Z",
+			"downloadUrl": "https://api.wunderdocs.io/documents/1d58055b-fc11-4246-bc16-87045d38381d/download",
+			"templateName": "My Template"
+		},
+}
+    ```
+
+  </Col>
+</Row>
+
+---
+
+## Retrieve a documents {{ tag: 'GET', label: '/v1/documents/:uid' }}
+
+<Row>
+  <Col>
+
+    This endpoint allows you to retrieve a documents by providing their wunderdocs uid. Refer to [the list](#the-documents-model) at the top of this page to see which properties are included with documents objects.
+
+  </Col>
+  <Col sticky>
+
+    <CodeGroup title="Request" tag="GET" label="/v1/documents/WAz8eIbvDR60rouK">
+
+    ```bash {{ title: 'cURL' }}
+    curl https://api.wunderdocs.io/v1/documents/WAz8eIbvDR60rouK \
+      -H "X-API-KEY: {api-key}" \
+    ```
+
+    </CodeGroup>
+
+    ```json {{ title: 'Response' }}
+		{
+			"uid": "1d58055b-fc11-4246-bc16-87045d38381d",
+			"title": "My Document",
+			"teamId": 2,
+			"created": "2023-06-30T10:57:12.000Z",
+			"updated": "2023-06-30T10:57:12.000Z",
+			"downloadUrl": "https://api.wunderdocs.io/documents/1d58055b-fc11-4246-bc16-87045d38381d/download",
+			"templateName": "My Template"
+		},
+    ```
+
+  </Col>
+</Row>
